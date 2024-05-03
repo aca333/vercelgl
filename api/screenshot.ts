@@ -20,15 +20,12 @@ export default async (req, res) => {
 
       await page.goto('https://twitter.com/realPengLoo');
 
-      // Wait for the profile description to load
-      await page.waitForSelector('.ProfileHeaderCard-bio');
-
-      // Extract the description of the profile
-      const profileDescription = await page.$eval('.ProfileHeaderCard-bio', element => element.textContent.trim());
+      // Get the whole website content
+      const websiteContent = await page.content();
 
       await browser.close()
 
-      res.status(200).send(profileDescription)
+      res.status(200).send(websiteContent)
     } catch (error) {
       if (browser) await browser.close()
       console.error('Error:', error)

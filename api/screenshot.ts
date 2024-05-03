@@ -20,9 +20,18 @@ export default async (req, res) => {
 
       await page.goto('https://twitter.com/realPengLoo');
 
+      // Wait for the tweets to load
+      await page.waitForSelector('article[role="article"]');
+
+      // Extract the text of the first tweet
+      const tweetText = await page.evaluate(() => {
+        const tweetNode = document.querySelector('article[role="article"]');
+        return tweetNode ? tweetNode.innerText : "No tweet found";
+      });
+
       await browser.close()
 
-      res.status(200).send('Successfully navigated to Twitter profile')
+      res.status(200).send(tweetText)
     } catch (error) {
       if (browser) await browser.close()
       console.error('Error:', error)

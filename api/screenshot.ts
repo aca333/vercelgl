@@ -20,18 +20,15 @@ export default async (req, res) => {
 
       await page.goto('https://twitter.com/realPengLoo');
 
-      // Wait for the tweets to load
-      await page.waitForSelector('article[role="article"]');
+      // Wait for the profile description to load
+      await page.waitForSelector('.ProfileHeaderCard-bio');
 
-      // Extract the text of the first tweet
-      const tweetText = await page.evaluate(() => {
-        const tweetNode = document.querySelector('article[role="article"]');
-        return tweetNode ? tweetNode.innerText : "No tweet found";
-      });
+      // Extract the description of the profile
+      const profileDescription = await page.$eval('.ProfileHeaderCard-bio', element => element.textContent.trim());
 
       await browser.close()
 
-      res.status(200).send(tweetText)
+      res.status(200).send(profileDescription)
     } catch (error) {
       if (browser) await browser.close()
       console.error('Error:', error)
